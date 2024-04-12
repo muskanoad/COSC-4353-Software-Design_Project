@@ -1,0 +1,125 @@
+body {
+    margin:0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+    background-image: url('FuelQuoteFormBackground.jpg'); 
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    position: relative; 
+}
+.nav-container {
+    text-align: center;
+}
+
+.nav-container {
+    background-color: rgb(39, 12, 91);
+    margin-top: 10px; /* Adjust as needed */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: inline-block; /* Ensure the nav is treated as a block */
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #e8efd2;
+    text-decoration: none;
+}
+
+.logo {
+    position: absolute;
+    top: -25px;
+    left: 20px;
+    width: 150px; 
+    height: auto; 
+}
+
+.logo {
+    position: absolute;
+    top: 0px;
+    left: 20px;
+    width: 150px; 
+    height: auto; 
+}
+
+.container {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: #f9f9f9;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-top: 100px;
+    box-sizing: border-box;
+}
+
+.container h1 {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #333;
+}
+
+.container form div {
+    margin-bottom: 20px;
+}
+
+.container label {
+    color: #777;
+}
+
+.container input[type="text"],
+.container input[type="date"],
+.container input[type="checkbox"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    background: none;
+    outline: none;
+    border-bottom: 2px solid #777;
+    transition: border-bottom 0.3s;
+}
+
+.container input[type="text"]:focus,
+.container input[type="date"]:focus,
+.container input[type="text"]:valid,
+.container input[type="date"]:valid {
+    border-bottom: 2px solid #333;
+}
+
+.container button {
+    width: 100%;
+    height: 40px;
+    border: 3px solid #f8fcfd;  
+    background: rgb(59, 33, 105);
+    border-radius: 20px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.3s;
+}
+
+.container button:hover {
+    background: rgb(46, 46, 113)
+}
+
+.container h2 {
+    padding-top: 20px;
+    border-top: 3px solid #333;
+}
+
+.container p {
+    margin: 10px 0;
+}
