@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('loginhomebackground.png'); 
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    position: relative; 
+    text-align: center;
+}
+
+.logo {
+    position: absolute;
+    top: 0px;
+    left: 20px;
+    width: 150px; 
+    height: auto; 
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color:#451a586c;
+    color: #edb6f5;
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #edb6f5;
+    text-decoration: none;
+}
+
+.section {
+    padding: 20px;
+    margin: 20px;
+    border: 1px solid #ccc;
+}
+p {
+    /*font-style: italic;*/
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 2.0em;
+    line-height: 1;
+    margin-bottom: 80px;
+    padding: 20px;
+    color:#edb6f5;
+    background-color: #451a588c;
+    border-radius: 10px;
+    text-align: center;
+
+}
+
+.about-us-container {
+    
+    margin: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.about-us-screenshot {
+    width: 22%; /* Adjust the width as needed */
+    height: auto;
+    margin-top: -120px;
+    margin-left: 100px;
+    margin-right: 60px; /* Adds some space between the image and the text */
+}
+
+.about-us-text {
+    
+    margin:-10px;
+    padding: 0px;
+    font-size: x-small; 
+    width: 90%; /* Adjust the width as needed */
+    text-align: left;
+}
+
+
+
+
+
+
+
+
+ 
+
