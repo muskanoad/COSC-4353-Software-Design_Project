@@ -1,5 +1,7 @@
 <?php
+
 session_start();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +21,7 @@ session_start();
     </style>
 </head>
 <body>
+
 
     <img src="loginlogo.jpg" alt="Logo" class="logo">
     
