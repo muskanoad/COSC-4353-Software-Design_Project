@@ -54,7 +54,7 @@ function generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon
     </div>
     <div class="container">
         <h1>Fuel Quote Form</h1>
-        <form id="quoteForm" method="post" action="../includes/quoteform.inc.php" >
+        <form id="quoteForm" method="post" action="../server/quoteform.inc.php" >
             <div>
                 <label>Gallons Requested:</label>
                 <input type="text" name="gallons_requested" id="gallons_requested" value="<?php echo htmlspecialchars($gallons_requested); ?>" required>

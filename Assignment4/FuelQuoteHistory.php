@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/dbh.inc.php';
+require_once __DIR__ . '/../server/dbh.inc.php';
 
 session_start();
 if (isset($_SESSION['user'])) {

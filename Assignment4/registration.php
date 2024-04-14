@@ -1,93 +1,99 @@
+<?php
+require_once __DIR__ . '/../server/dbh.inc.php';
+
+session_start();
+$user = null;
+$userData = null;
+
+if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+    // Assuming $conn is your database connection from dbh.inc.php
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $user);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $userData = $result->fetch_assoc();
+    }
+    $stmt->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client Registration</title>
-    <link rel="stylesheet" href="registrationstyle.css" />
-    <style>
-        /* Style the eye icons within the password fields */
-        .toggle-password {
-          cursor: pointer;
-          position: absolute;
-          right: 10px;
-          top: 10px;
-        }
-        /* Style for error message */
-        .error-message {
-          color: red;
-          font-size: 14px;
-          margin-bottom: 10px;
-        }
-    </style>
-</head>
+    <title>Client Profile Management</title>
+    <link rel="stylesheet" href="ClientProfileManagement.css" />
+  </head>
+  
 <body>
-   
-    <img src="registrationlogo.jpg" alt="Logo" class="logo">
-    <div class="center">
-      <h1>Client Registration</h1>
-      <?php
-      session_start();
-      if(isset($_SESSION['error'])) {
-          echo "<p style='color:red'>".$_SESSION['error']."</p>";
-          unset($_SESSION['error']);
-      }
-      ?>
-      <form action="../includes/userregister.inc.php" method="post" >
-        <div class="txt_field">
-          <input type="text" name="username" required />
-          <span></span>
-          <label>Create Username</label>
-        </div>
-        <div class="txt_field">
-          <input type="password" id="password" name="password" required oninput="validatePasswords()" />
-          <span class="toggle-password" onclick="togglePassword()">👁️</span>
-          <label>Create Password</label>
-        </div>
-        <div class="txt_field">
-          <input type="password" id="confirm_password" name="confirm_password" required oninput="validatePasswords()" />
-          <span class="toggle-password" onclick="togglePassword()">👁️</span>
-          <label>Confirm Password</label>
-        </div>
-        <div id="error-message" class="error-message" style="display: none;">Passwords do not match.</div>
-        <input type="submit" value="Register" />
-      </form>
+    <img src="logo.png" alt="Logo" class="logo">
+    <div class="nav-container">
+        <nav>
+            <ul>
+                <li><a href="loginhome.php">Homepage</a></li>
+                <li><a href="FuelQuoteForm.php">Quote</a></li>
+                <li><a href="FuelQuoteHistory.php">Quote History</a></li>
+                <li><a href="homepage.php">Logout</a></li>
+            </ul>
+        </nav>
     </div>
-
-
-    <script>
-      function togglePassword() {
-        var password = document.getElementById('password');
-        var confirmPassword = document.getElementById('confirm_password');
-        var togglePasswords = document.getElementsByClassName('toggle-password');
-        if (password.type === 'password') {
-          password.type = 'text';
-          confirmPassword.type = 'text';
-          for(var i=0; i < togglePasswords.length; i++) {
-            togglePasswords[i].textContent = '❌'; // Change to hide icon
-          }
-        } else {
-          password.type = 'password';
-          confirmPassword.type = 'password';
-          for(var i=0; i < togglePasswords.length; i++) {
-            togglePasswords[i].textContent = '👁️'; // Change to show icon
-          }
-        }
-      }
-
-      function validatePasswords() {
-        var password = document.getElementById('password').value;
-        var confirmPassword = document.getElementById('confirm_password').value;
-        if (password !== confirmPassword) {
-          document.getElementById('error-message').style.display = 'block';
-        } else {
-          document.getElementById('error-message').style.display = 'none';
-        }
-      }
-
-      // Add event listeners to password fields
-      document.getElementById('password').addEventListener('input', validatePasswords);
-      document.getElementById('confirm_password').addEventListener('input', validatePasswords);
-    </script>
+    <div class="center">
+    <h1>Client Profile Management</h1>
+    <form action="../server/profilemanage.inc.php" method="post">
+        <div>
+            <label for="full_name">Full Name:</label>
+            <input type="text" id="full_name" name="full_name" maxlength="50" value="<?php echo $userData['full_name'] ?? ''; ?>" required>
+        </div>
+        <div>
+            <label for="address_1">Address 1:</label>
+            <input type="text" id="address_1" name="address_1" maxlength="100" value="<?php echo $userData['address_1'] ?? ''; ?>" required>
+        </div>
+        <div>
+            <label for="address_2">Address 2:</label>
+            <input type="text" id="address_2" name="address_2" maxlength="100" value="<?php echo $userData['address_2'] ?? ''; ?>">
+        </div>
+        <div>
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" maxlength="100" value="<?php echo $userData['city'] ?? ''; ?>" required>
+        </div>
+        <div>
+            <label for="state">State:</label>
+            <select id="state" name="state" required>
+                <option value="">Select State</option>
+                <?php
+                $states = [
+                    "AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona",
+                    "AR" => "Arkansas", "CA" => "California", "CO" => "Colorado",
+                    "CT" => "Connecticut", "DE" => "Delaware", "FL" => "Florida",
+                    "GA" => "Georgia", "HI" => "Hawaii", "ID" => "Idaho",
+                    "IL" => "Illinois", "IN" => "Indiana", "IA" => "Iowa",
+                    "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana",
+                    "ME" => "Maine", "MD" => "Maryland", "MA" => "Massachusetts",
+                    "MI" => "Michigan", "MN" => "Minnesota", "MS" => "Mississippi",
+                    "MO" => "Missouri", "MT" => "Montana", "NE" => "Nebraska",
+                    "NV" => "Nevada", "NH" => "New Hampshire", "NJ" => "New Jersey",
+                    "NM" => "New Mexico", "NY" => "New York", "NC" => "North Carolina",
+                    "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma",
+                    "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island",
+                    "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee",
+                    "TX" => "Texas", "UT" => "Utah", "VT" => "Vermont",
+                    "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia",
+                    "WI" => "Wisconsin", "WY" => "Wyoming"
+                ];
+                foreach ($states as $abbr => $name) {
+                    echo '<option value="' . $abbr . '"' . ($userData['state'] === $abbr ? ' selected' : '') . '>' . $name . '</option>';
+                }
+                ?>
+            </select>
+        </div>
+        <div>
+            <label for="zipcode">Zipcode:</label>
+            <input type="text" id="zipcode" name="zipcode" minlength="5" maxlength="9" value="<?php echo $userData['zipcode'] ?? ''; ?>" required>
+        </div>
+        <input type="submit" value="<?php echo $userData ? 'Submit Updated Form' : 'Submit New Form'; ?>" />
+    </form>
+    </div>
 </body>
 </html>
