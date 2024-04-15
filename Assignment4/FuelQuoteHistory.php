@@ -58,7 +58,7 @@ if (isset($_SESSION['user'])) {
                     echo "<td>" . htmlspecialchars($row['address']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['gallons']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['deliverydate']) . "</td>";
-                    echo "<td>$" . number_format($row['suggestedprice'], 2) . "</td>";
+                    echo "<td>$" . number_format($row['suggestedprice'], 3) . "</td>";
                     echo "<td>$" . number_format($row['totalprice'], 2) . "</td>";
                     echo "</tr>";
                 }
@@ -73,3 +73,4 @@ if (isset($_SESSION['user'])) {
     
 </body>
 </html>
+
