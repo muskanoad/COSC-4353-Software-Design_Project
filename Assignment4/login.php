@@ -1,7 +1,5 @@
 <?php
-
 session_start();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +9,6 @@ session_start();
     <title>Client Login</title>
     <link rel="stylesheet" href="loginstyle.css" />
     <style>
-        /* Style the eye icons within the password fields */
         .toggle-password {
           cursor: pointer;
           position: absolute;
@@ -21,12 +18,16 @@ session_start();
     </style>
 </head>
 <body>
-
-
     <img src="loginlogo.jpg" alt="Logo" class="logo">
     
     <div class="center">
       <h1>Client Login</h1>
+      <?php
+        if (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
+            echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
+            unset($_SESSION['error']);
+        }
+      ?>
       <form action="../server/userlogin.inc.php" method="post" >
         <div class="txt_field">
           <input type="text" name="username" required />
@@ -38,6 +39,7 @@ session_start();
           <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
           <label>Client Password</label>
         </div>
+
         <input type="submit" value="Login" />
         <div class="signup_link">New Client? <a href="registration.php">Register here</a></div>
       </form>
