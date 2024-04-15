@@ -9,6 +9,7 @@ session_start();
     <title>Client Login</title>
     <link rel="stylesheet" href="loginstyle.css" />
     <style>
+        /* Style the eye icons within the password fields */
         .toggle-password {
           cursor: pointer;
           position: absolute;
@@ -23,8 +24,10 @@ session_start();
     <div class="center">
       <h1>Client Login</h1>
       <?php
+        // Check if error message is set in session
         if (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
             echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
+            // Clear the error message after displaying it
             unset($_SESSION['error']);
         }
       ?>
