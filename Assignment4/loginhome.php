@@ -25,7 +25,7 @@
     <?php
     session_start();
     if (isset($_SESSION['user'])) {
-        echo "<p>Welcome back, " . htmlspecialchars($_SESSION['user']) . "!</p>";
+        echo "<p>Welcome, " . htmlspecialchars($_SESSION['user']) . "!</p>";
     } else {
         header('Location: homepage.php');
         exit();
