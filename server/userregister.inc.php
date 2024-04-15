@@ -4,7 +4,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
     $confirm_password = $_POST["confirm_password"];
-
+    //Validations
     if (empty($username) || empty($password) || empty($confirm_password)) {
         $_SESSION['error'] = 'All fields are required.';
         header('Location: ' . $_SERVER['PHP_SELF']);
