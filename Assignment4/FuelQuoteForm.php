@@ -1,34 +1,81 @@
 <?php
 require_once __DIR__ . '/../server/dbh.inc.php';
-
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 if (isset($_SESSION['user'])) {
     $user = $_SESSION['user'];
 }
-include 'PriceModel.php';
 
-// Create an instance of the PriceModel class
-$priceModel = new PriceModel(); // just a class for now
+// Define the PriceModel functionalities directly within FuelQuoteForm.php
+class PriceModel
+{
+    private const CURRENT_PRICE = 1.50; // Current price per gallon
+
+    public static function calculateSuggestedPrice($user, $gallonsRequested)
+    {
+        $inState = self::checkUserLocation($user);
+        $hasHistory = self::checkRateHistory($user);
+        
+        $gallonsRequestedFactor = ($gallonsRequested) ? 0.02 : 0.03;
+        $locationFactor = $inState ? 0.02 : 0.04;
+        $rateHistoryFactor = $hasHistory ? 0.01 : 0;
+
+        $margin = self::CURRENT_PRICE * ($locationFactor - $rateHistoryFactor + $gallonsRequestedFactor + 0.10);
+        $suggestedPrice = self::CURRENT_PRICE + $margin;
+
+        return $suggestedPrice;
+    }
+
+    public static function checkUserLocation($user)
+    {
+        global $pdo; // Use the database connection from the global scope
+
+        try {
+            $stmt = $pdo->prepare("SELECT state FROM clientinfo INNER JOIN users ON clientinfo.id = users.user_id WHERE users.username = :username");
+            $stmt->bindParam(":username", $user);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return ($row && $row['state'] === 'TX');
+        } catch (PDOException $e) {
+            die("Query failed: " . $e->getMessage());
+        }
+    }
+
+    public static function checkRateHistory($user)
+    {
+        global $pdo; // Use the database connection from the global scope
+
+        try {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM fueldata INNER JOIN users ON fueldata.fuel_id = users.user_id WHERE users.username = :username");
+            $stmt->bindParam(":username", $user);
+            $stmt->execute();
+            $rowCount = $stmt->fetchColumn();
+
+            return ($rowCount > 0);
+        } catch (PDOException $e) {
+            die("Query failed: " . $e->getMessage());
+        }
+    }
+}
 
 $gallons_requested = "";
-$same_address = true; // Set default value for same_address
 $delivery_date = "";
-$price_per_gallon = 1.47; // Initialize default price per gallon random value I put
-
-
-function generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon, $delivery_date) {
+$price_per_gallon = 0;
+function generateHtmlOutput($gallons_requested, $price_per_gallon, $delivery_date) {
     $htmlOutput = '';
 
     // Append each HTML element to the output variable
     $htmlOutput .= '<h2>Cost estimate:</h2>';
     $htmlOutput .= '<p>Gallons Requested: ' . floatval($gallons_requested). '</p>';
-    $htmlOutput .= '<p>In-State? ' . ($same_address ? 'Yes' : 'No') . '</p>';
-    $htmlOutput .= '<p>Price per Gallon: $' . number_format($price_per_gallon, 2) . '</p>';
+    $htmlOutput .= '<p>Price per Gallon: $' . number_format($price_per_gallon, 3) . '</p>';
     $htmlOutput .= '<p>Total Cost: $' . number_format(floatval($gallons_requested) * $price_per_gallon, 2) . '</p>';
     $htmlOutput .= '<p>Delivery Date: ' . htmlspecialchars($delivery_date) . '</p>';
 
     return $htmlOutput;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -62,8 +109,6 @@ function generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon
             <div>
             <?php
             try {
-                // require_once "../includes/dbh.inc.php"; // file with database connection
-
                 // Prepare SQL statement to fetch the address based on the username
                 $stmt = $pdo->prepare("SELECT address_1, city, state, zip FROM clientinfo INNER JOIN users ON clientinfo.id = users.user_id WHERE users.username = :username");
                 $stmt->bindParam(":username", $_SESSION['user']);
@@ -86,7 +131,6 @@ function generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon
                 echo "Error: " . $e->getMessage();
             }
             ?>
-                <input type="checkbox" name="same_address" id="same_address" <?php if ($same_address) echo 'checked'; ?>>
             </div>
             <div>
                 <label>Delivery Date:</label>
@@ -100,28 +144,29 @@ function generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon
         <div id="cost_estimate">
             <?php
             // Output user-entered data
-            $htmlOutput = generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon, $delivery_date);
+            $htmlOutput = generateHtmlOutput($gallons_requested, $price_per_gallon, $delivery_date);
             echo $htmlOutput; // Output the HTML
             ?>
         </div>
     </div>
 
     <script>
-        function getQuote() {
+    function getQuote() {
         // Fetch user-entered data
         var gallons_requested = parseFloat(document.getElementById("gallons_requested").value);
-        var same_address = document.getElementById("same_address").checked;
         var delivery_date = document.getElementById("delivery_date").value;
+        // Calculate suggested price using PriceModel method
+        var over1000 = gallons_requested > 1000;
 
-        var suggestedPrice = calculateSuggestedPrice(gallons_requested, same_address);
+        var suggestedPrice = <?php echo PriceModel::calculateSuggestedPrice($user, ' + over1000 + '); ?>;
 
-        var totalPrice = calculateTotalPrice(gallons_requested, suggestedPrice);
+        // Calculate total price using suggested price
+        var totalPrice = gallons_requested * suggestedPrice;
 
         // Update HTML output with user-entered and calculated data
         var htmlOutput = '<h2>Cost estimate:</h2>';
         htmlOutput += '<p>Gallons Requested: ' + gallons_requested + '</p>';
-        htmlOutput += '<p>In-State? ' + (same_address ? 'Yes' : 'No') + '</p>';
-        htmlOutput += '<p>Price per Gallon: $' + suggestedPrice.toFixed(2) + '</p>';
+        htmlOutput += '<p>Price per Gallon: $' + suggestedPrice.toFixed(3) + '</p>';
         htmlOutput += '<p>Total Cost: $' + totalPrice.toFixed(2) + '</p>';
         htmlOutput += '<p>Delivery Date: ' + delivery_date + '</p>';
 
@@ -130,24 +175,8 @@ function generateHtmlOutput($gallons_requested, $same_address, $price_per_gallon
         document.getElementById("suggested_price").value = suggestedPrice;
         document.getElementById("total_price").value = totalPrice;
     }
+</script>
 
-
-        function calculateSuggestedPrice() {
-            var same_address = document.getElementById("same_address").checked;
-            var price_per_gallon = <?php echo json_encode($price_per_gallon); ?>;
-            // Your calculation logic here
-            if(same_address){
-                return price_per_gallon;
-            }
-        }
-
-        function calculateTotalPrice() {
-            var gallons_requested = document.getElementById("gallons_requested").value;
-            var price_per_gallon = <?php echo json_encode($price_per_gallon); ?>;
-
-            return gallons_requested * price_per_gallon;
-        }
-    </script>
 </body>
 </html>
 
