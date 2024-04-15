@@ -10,7 +10,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $delivery_date = $_POST['delivery_date'];
     $suggested_price = $_POST['suggested_price'];
     $total_price = $_POST['total_price'];
-
+    
+    // Validate required fields
+    if (empty($gallons_requested) || empty($delivery_date) || empty($suggested_price) || empty($total_price)) {
+        $_SESSION['error'] = 'All fields are required.';
+        header("Location: ../Assignment4/fuelquoteform.php?error=1");
+        exit();
+    }
+        // Validate field types
+    if (!is_numeric($gallons_requested) || !is_numeric($suggested_price) || !is_numeric($total_price)) {
+        $_SESSION['error'] = 'Numeric values are required for Gallons Requested, Suggested Price, and Total Price.';
+        header("Location: ../Assignment4/fuelquoteform.php?error=1");
+        exit();
+    }
     try {
         require_once "dbh.inc.php";
 
