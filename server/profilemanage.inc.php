@@ -10,7 +10,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $state = $_POST["state"];
     $zip = $_POST["zipcode"];
     $user = $_SESSION['user'];
-   
+    
+    //Validations
+    if (empty($full_name) || empty($address_1) || empty($city) || empty($state) || empty($zip)) {
+        die("All fields are required.");
+    }
+
+    if (strlen($full_name) > 50) {
+        die("Full Name must be less than 50 characters.");
+    }
+
+    if (strlen($address_1) > 100) {
+        die("Address 1 must be less than 100 characters.");
+    }
+
+    if (strlen($city) > 100) {
+        die("City must be less than 100 characters.");
+    }
+
+    if (strlen($zip) < 5 || strlen($zip) > 9) {
+        die("Zipcode must be between 5 and 9 characters.");
+    }
 
     try {
         require_once "dbh.inc.php";
