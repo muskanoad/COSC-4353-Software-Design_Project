@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../server/dbh.inc.php';
+require_once __DIR__ . '/../includes/dbh.inc.php';
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -101,7 +101,13 @@ function generateHtmlOutput($gallons_requested, $price_per_gallon, $delivery_dat
     </div>
     <div class="container">
         <h1>Fuel Quote Form</h1>
-        <form id="quoteForm" method="post" action="../server/quoteform.inc.php" >
+        <?php
+        if(isset($_SESSION['error'])) {
+            echo "<p style='color:red'>".$_SESSION['error']."</p>";
+            unset($_SESSION['error']);
+        }
+        ?>
+        <form id="quoteForm" method="post" action="../includes/quoteform.inc.php" >
             <div>
                 <label>Gallons Requested:</label>
                 <input type="text" name="gallons_requested" id="gallons_requested" value="<?php echo htmlspecialchars($gallons_requested); ?>" required>
@@ -179,4 +185,3 @@ function generateHtmlOutput($gallons_requested, $price_per_gallon, $delivery_dat
 
 </body>
 </html>
-
