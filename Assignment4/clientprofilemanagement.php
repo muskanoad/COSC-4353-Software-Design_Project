@@ -4,6 +4,16 @@ require_once __DIR__ . '/../server/dbh.inc.php';
 session_start();
 if (isset($_SESSION['user'])) {
     $user = $_SESSION['user'];
+
+    // Fetch client information from the database if it exists
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM clientinfo WHERE id = (SELECT user_id FROM users WHERE username = :username)");
+        $stmt->bindParam(":username", $user);
+        $stmt->execute();
+        $clientInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        die("Query failed: " . $e->getMessage());
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -29,22 +39,28 @@ if (isset($_SESSION['user'])) {
     </div>
     <div class="center">
     <h1>Client Profile Management</h1>
+    <?php
+        if(isset($_SESSION['error'])) {
+            echo "<p style='color:red'>".$_SESSION['error']."</p>";
+            unset($_SESSION['error']);
+        }
+    ?>
     <form action="../server/profilemanage.inc.php" method="post">
         <div>
             <label for="full_name">Full Name:</label>
-            <input type="text" id="full_name" name="full_name" maxlength="50" required>
+            <input type="text" id="full_name" name="full_name" maxlength="50" required value="<?php echo isset($clientInfo['Name']) ? $clientInfo['Name'] : ''; ?>">
         </div>
         <div>
             <label for="address_1">Address 1:</label>
-            <input type="text" id="address_1" name="address_1" maxlength="100" required>
+            <input type="text" id="address_1" name="address_1" maxlength="100" required value="<?php echo isset($clientInfo['address_1']) ? $clientInfo['address_1'] : ''; ?>">
         </div>
         <div>
             <label for="address_2">Address 2:</label>
-            <input type="text" id="address_2" name="address_2" maxlength="100">
+            <input type="text" id="address_2" name="address_2" maxlength="100" value="<?php echo isset($clientInfo['address_2']) ? $clientInfo['address_2'] : ''; ?>">
         </div>
         <div>
             <label for="city">City:</label>
-            <input type="text" id="city" name="city" maxlength="100" required>
+            <input type="text" id="city" name="city" maxlength="100" required value="<?php echo isset($clientInfo['city']) ? $clientInfo['city'] : ''; ?>">
         </div>
         <div>
             <label for="state">State:</label>
@@ -104,7 +120,7 @@ if (isset($_SESSION['user'])) {
         </div>
         <div>
             <label for="zipcode">Zipcode:</label>
-            <input type="text" id="zipcode" name="zipcode" minlength="5" maxlength="9" required>
+            <input type="text" id="zipcode" name="zipcode" minlength="5" maxlength="9" required value="<?php echo isset($clientInfo['zip']) ? $clientInfo['zip'] : ''; ?>">       
         </div>
         <input type="submit" value="Submit" />
     </form>
