@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/dbh.inc.php';
+require_once __DIR__ . '/../server/dbh.inc.php';
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -107,7 +107,7 @@ function generateHtmlOutput($gallons_requested, $price_per_gallon, $delivery_dat
             unset($_SESSION['error']);
         }
         ?>
-        <form id="quoteForm" method="post" action="../includes/quoteform.inc.php" >
+        <form id="quoteForm" method="post" action="../server/quoteform.inc.php" >
             <div>
                 <label>Gallons Requested:</label>
                 <input type="text" name="gallons_requested" id="gallons_requested" value="<?php echo htmlspecialchars($gallons_requested); ?>" required>
