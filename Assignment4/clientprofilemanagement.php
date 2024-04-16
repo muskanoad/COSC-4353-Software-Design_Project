@@ -122,8 +122,26 @@ if (isset($_SESSION['user'])) {
             <label for="zipcode">Zipcode:</label>
             <input type="text" id="zipcode" name="zipcode" minlength="5" maxlength="9" required value="<?php echo isset($clientInfo['zip']) ? $clientInfo['zip'] : ''; ?>">       
         </div>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Submit" id="submitBtn" /> 
+        <button type="button" onclick="editClientInfo()" style="width: 100%; height: 40px; border: 2px solid white; background: #733b3b; border-radius: 20px; font-size: 16px; color: #fff; font-weight: 700; cursor: pointer; outline: none;">Edit</button>
+        <button type="submit" style="display: none; width: 100%; height: 40px; border: 2px solid #333; background: #733b3b; border-radius: 20px; font-size: 16px; color: #fff; font-weight: 700; cursor: pointer; outline: none;" id="updateBtn" name="update">Update</button>
+
     </form>
     </div>
+    <script>
+    function editClientInfo() {
+        // Enable all form fields for editing
+        document.getElementById("full_name").disabled = false;
+        document.getElementById("address_1").disabled = false;
+        document.getElementById("address_2").disabled = false;
+        document.getElementById("city").disabled = false;
+        document.getElementById("state").disabled = false;
+        document.getElementById("zipcode").disabled = false;
+
+        // Hide submit button, show update button
+        document.getElementById("submitBtn").style.display = "none";
+        document.getElementById("updateBtn").style.display = "inline";
+    }
+</script>
 </body>
 </html>
