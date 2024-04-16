@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../server/dbh.inc.php';
 
 session_start();
-if (isset($_SESSION['user'])) {
+if (isset($_SESSION['user'])) {{
     $user = $_SESSION['user'];
 }
 ?>
