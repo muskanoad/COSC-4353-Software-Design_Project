@@ -10,4 +10,4 @@
       <directory suffix=".php">tests</directory>
     </include>
   </source>
-</phpunit>
+</phpunit>>
