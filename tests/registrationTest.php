@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php'; // Adjust the path as needed
+require_once __DIR__ . '/../vendor/autoload.php'; 
 require_once __DIR__ . '/../Assignment4/registration.php';
 
 class registrationTest extends PHPUnit\Framework\TestCase {
@@ -13,7 +13,6 @@ class registrationTest extends PHPUnit\Framework\TestCase {
         $this->assertArrayHasKey('registered_users', $_SESSION);
     }
 
- // Test case for empty fields
     public function testEmptyFields() {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['username'] = '';
@@ -28,7 +27,6 @@ class registrationTest extends PHPUnit\Framework\TestCase {
         $this->assertArrayHasKey('error', $_SESSION);
     }
 
-    // Test case for mismatched passwords
     public function testMismatchedPasswords() {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['username'] = 'newuser';
