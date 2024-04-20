@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = null;
         
         // Redirect back to the profile page after updating
-        header("Location: ../Assignment4/loginhome.php");
+        header("Location: ../Assignment4/clientprofilemanagement.php");
         exit();
     } catch (PDOException $e) {
         // Handle any potential database errors
