@@ -35,31 +35,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         require_once "dbh.inc.php";
 
-       // correcly inputs the user information into the database
-        $query = "INSERT INTO clientinfo (Name, address_1, address_2, city, state, zip, id)
-          SELECT :Name, :address_1, :address_2, :city, :state, :zip, users.user_id
-          FROM users
-          WHERE users.username = :username";
-        // storing the user entered data into the database
+        // Check if client info already exists for the user
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientinfo WHERE id = (SELECT user_id FROM users WHERE username = :username)");
+        $stmt->bindParam(":username", $user);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+
+        if ($count > 0) {
+            // Update client info
+            $query = "UPDATE clientinfo 
+                      SET Name = :Name, address_1 = :address_1, address_2 = :address_2, city = :city, state = :state, zip = :zip
+                      WHERE id = (SELECT user_id FROM users WHERE username = :username)";
+        } else {
+            // Insert client info
+            $query = "INSERT INTO clientinfo (Name, address_1, address_2, city, state, zip, id)
+                      SELECT :Name, :address_1, :address_2, :city, :state, :zip, users.user_id
+                      FROM users
+                      WHERE users.username = :username";
+        }
+
+        // Execute the query
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(":Name",$full_name);
-        $stmt->bindParam(":address_1",$address_1);
-        $stmt->bindParam(":address_2",$address_2);
-        $stmt->bindParam(":city",$city);
-        $stmt->bindParam(":state",$state);
-        $stmt->bindParam(":zip",$zip);
+        $stmt->bindParam(":Name", $full_name);
+        $stmt->bindParam(":address_1", $address_1);
+        $stmt->bindParam(":address_2", $address_2);
+        $stmt->bindParam(":city", $city);
+        $stmt->bindParam(":state", $state);
+        $stmt->bindParam(":zip", $zip);
         $stmt->bindParam(":username", $user);
         $stmt->execute();
 
+        // Close connections
         $pdo = null;
         $stmt = null;
         
-        header("Location: ../Assignment4/loginhome.php");
+        // Redirect back to the profile page after updating
+        header("Location: ../Assignment4/clientprofilemanagement.php");
         exit();
     } catch (PDOException $e) {
-        die("Query failed: ". $e->getMessage());
+        // Handle any potential database errors
+        die("Query failed: " . $e->getMessage());
     }
 } else {
+    // If the request method is not POST, redirect to the login page
     header("Location: ../Assignment4/login.php");
     exit();
 }
